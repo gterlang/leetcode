@@ -1,0 +1,20 @@
+string convert(string s, int numRows)
+{
+    if (numRows <= 1)
+        return s;
+    vector<string> row(numRows);
+    int dir = -1;
+    int i = 0;
+    for (const char& ch : s) {
+        row[i].push_back(ch);        
+        if (i == 0 || i == numRows - 1)
+            dir *= -1;
+        i += dir;
+    }
+    
+    string result;
+    for (const auto& str : row)
+        result.append(str);
+    
+    return result;
+}
