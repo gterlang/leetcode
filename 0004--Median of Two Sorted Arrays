@@ -1,0 +1,49 @@
+int KthNumber(vector<int> &v1, int i, vector<int> &v2, int j, int k)
+{
+    if (i >= v1.size())
+        return v2[j+k-1];
+    if (j >= v2.size())
+        return v1[i+k-1];
+    if (k == 1)
+        return min(v1[i], v2[j]);
+    int mid1 = i+k/2-1 < v1.size() ? v1[i+k/2-1] : INT_MAX;
+    int mid2 = j+k/2-1 < v2.size() ? v2[j+k/2-1] : INT_MAX;
+    if (mid1 < mid2)
+        return KthNumber(v1, i+k/2, v2, j, k-k/2);
+    else
+        return KthNumber(v1, i, v2, j+k/2, k-k/2);
+}
+
+double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2)
+{
+    int s = nums1.size() + nums2.size();
+    if (s & 0x1)
+        return KthNumber(nums1, 0, nums2, 0, (s+1)/2);
+    else
+        return (KthNumber(nums1, 0, nums2, 0, (s+1)/2) + KthNumber(nums1, 0, nums2, 0, (s+2)/2)) / 2.0;
+}
+
+--------
+
+double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2)
+{
+    int n1 = nums1.size();
+    int n2 = nums2.size();
+    int lo = max(0, n1 - n2);
+    int hi = min(2 * n1, n1 + n2);
+    while (lo <= hi) {
+        int c1 = lo + (hi - lo) / 2;
+        int c2 = n1 + n2 - c1;
+        int l1 = c1 == 0 ? INT_MIN : nums1[(c1-1)/2];
+        int r1 = c1 == 2 * n1 ? INT_MAX : nums1[c1/2];
+        int l2 = c2 == 0 ? INT_MIN : nums2[(c2-1)/2];
+        int r2 = c2 == 2 * n2 ? INT_MAX : nums2[c2/2];
+        if (max(l1, l2) <= min(r1, r2))
+            return (max(l1, l2) + min(r1, r2)) / 2.0;
+        else if (l1 > r2)
+            hi = c1 - 1;
+        else
+            lo = c1 + 1;
+    }
+    return -1;
+}
